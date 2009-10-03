@@ -53,7 +53,7 @@ WIN32_ARGS = -O2 -Wall -Waggregate-return -Wcast-align -Wdeclaration-after-state
 CONVLOCKER_SOURCES = 	conversationlocker.c \
 					conversationlocker-icons.h
 
-DEB_PACKAGE_DIR = ./packaging/Debian/
+DEB_PACKAGE_DIR = ./packaging/deb/
 
 CONVLOCKER_MAIN = conversationlocker.c
 CONVLOCKER_VERSION = 1.0
@@ -90,25 +90,26 @@ conversationlocker.dll:	$(CONVLOCKER_SOURCES)
 	upx conversationlocker.dll
 
 conversationlocker.deb :	conversationlocker.so
-	echo "Dont forget to update version number"
-	cp conversationlocker.so ${DEB_PACKAGE_DIR}/usr/lib/pidgin/
-	chown -R root:root ${DEB_PACKAGE_DIR}
-	chmod -R 755 ${DEB_PACKAGE_DIR}
-	dpkg-deb --build ${DEB_PACKAGE_DIR} $@ > /dev/null
+	@echo "\nDont forget to update version number"
+	@cp conversationlocker.so ${DEB_PACKAGE_DIR}/usr/lib/pidgin/
+	#chown -R root:root ${DEB_PACKAGE_DIR}
+	#chmod -R 755 ${DEB_PACKAGE_DIR}
+	@dpkg-deb --build ${DEB_PACKAGE_DIR} pidgin-conversation-locker_$(CONVLOCKER_VERSION)_1_i386.deb
+	@echo -e "\ndeb package generated."
 
 conversationlocker.exe:	conversationlocker.dll
 	@cp packaging/windows/conversationlocker.nsi .
 	@makensis conversationlocker.nsi > /dev/null
 	@rm conversationlocker.nsi
-	@echo -e "\n\n Did you update the version?\n"
-	@echo "*.exe installer generated."
+	@echo -e "\n Did you update the version?\n"
+	@echo -e "\n*.exe installer generated."
 
 sourcepackage :	$(CONVLOCKER_SOURCES) img-src packaging AUTHORS ChangeLog COPYING Makefile Makefile.mingw NEWS README VERSION
 	@mkdir -p pidgin-conversation-locker
 	@cp -r $^ pidgin-conversation-locker
 	@tar --bzip2 -cf pidgin-conversation-locker-$(CONVLOCKER_VERSION)-src.tar.bz2 pidgin-conversation-locker
 	@rm -rf pidgin-conversation-locker
-	@echo "Source package generated."
+	@echo -e "\nSource package generated."
 
 linux-bin :	packaging/linux/install.sh conversationlocker.so
 	@echo "Don't forget to update version number in /packaging/linux/README"
@@ -116,5 +117,5 @@ linux-bin :	packaging/linux/install.sh conversationlocker.so
 	@cp packaging/linux/install.sh packaging/linux/README conversationlocker.so pidgin-conversation-locker-$(CONVLOCKER_VERSION)
 	@tar --bzip2 -cf pidgin-conversation-locker-$(CONVLOCKER_VERSION)-linux-i386.tar.bz2 pidgin-conversation-locker-$(CONVLOCKER_VERSION)
 	@rm -r pidgin-conversation-locker-$(CONVLOCKER_VERSION)
-	@echo "Linux binary installer generated."
+	@echo -e "\nLinux binary installer generated."
 
