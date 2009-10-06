@@ -548,11 +548,13 @@ static PurplePluginInfo info =
 	PLUGIN_ID,							   /* id */
 	N_("Conversation Locker"),                      /* name */
 	PLUGIN_VERSION,                                /* version */
-	N_("Conversation Locker"),         		   /* summary */
 	N_("Restricts closing of important conversations"
-	   "by locking them. Provides lock/unlock button "
-	   "on each conversation window/tab. Also shows "
-	   "warning if user tries to close locked window"),/* description */
+	   "by locking(preventing from closing) them."),/* summary */
+	N_("Shows lock/unlock button on each
+	"conversation window/tab with which important "
+	"conversations can be locked(prevented from closing). "
+	"Also shows warning if user tries to close window "
+	"containing locked conversations."),		   /* description */
 	PLUGIN_AUTHOR,							   /* author */
 	PLUGIN_WEBSITE,                                 /* homepage */
 	plugin_load,                                    /* load */
