@@ -53,8 +53,6 @@ WIN32_ARGS = -O2 -Wall -Waggregate-return -Wcast-align -Wdeclaration-after-state
 CONVLOCKER_SOURCES = 	conversationlocker.c \
 					conversationlocker-icons.h
 
-DEB_PACKAGE_DIR = ./packaging/deb/
-
 CONVLOCKER_MAIN = conversationlocker.c
 CONVLOCKER_VERSION = 1.0
 
@@ -78,7 +76,8 @@ clean:
 	@rm -f *.exe
 	@rm -f pidgin-conversation-locker-$(CONVLOCKER_VERSION)-src.tar.bz2
 	@rm -f pidgin-conversation-locker-$(CONVLOCKER_VERSION)-linux-i386.tar.bz2
-	@echo "Cleanup performed!"
+	@rm -f *.deb
+	@echo -e "Cleanup performed!"
 
 conversationlocker.so:		$(CONVLOCKER_SOURCES)
 	$(LINUX32_COMPILER) $(CFLAGS) $(LIBPURPLE_CFLAGS) $(PIDGIN_CFLAGS) $(GTK_CFLAGS) -Wall -pthread $(GLIB_CFLAGS) -I. -pipe conversationlocker.c -o conversationlocker.so -shared -fPIC -DPIC
@@ -91,10 +90,13 @@ conversationlocker.dll:	$(CONVLOCKER_SOURCES)
 
 conversationlocker.deb :	conversationlocker.so
 	@echo "\nDont forget to update version number"
-	@cp conversationlocker.so ${DEB_PACKAGE_DIR}/usr/lib/pidgin/
-	#chown -R root:root ${DEB_PACKAGE_DIR}
-	#chmod -R 755 ${DEB_PACKAGE_DIR}
-	@dpkg-deb --build ${DEB_PACKAGE_DIR} pidgin-conversation-locker_$(CONVLOCKER_VERSION)_1_i386.deb
+	@mkdir -p debdir/DEBIAN
+	@mkdir -p debdir/usr/lib/pidgin/
+	@chmod -x conversationlocker.so
+	@cp conversationlocker.so debdir/usr/lib/pidgin/
+	@cp packaging/deb/DEBIAN/control debdir/DEBIAN/control
+	@dpkg-deb --build debdir pidgin-conversation-locker_$(CONVLOCKER_VERSION)_2_i386.deb
+	@rm -r debdir
 	@echo -e "\ndeb package generated."
 
 conversationlocker.exe:	conversationlocker.dll
@@ -102,7 +104,7 @@ conversationlocker.exe:	conversationlocker.dll
 	@makensis conversationlocker.nsi > /dev/null
 	@rm conversationlocker.nsi
 	@echo -e "\n Did you update the version?\n"
-	@echo -e "\n*.exe installer generated."
+	@echo -e "\n.exe installer generated."
 
 sourcepackage :	$(CONVLOCKER_SOURCES) img-src packaging AUTHORS ChangeLog COPYING Makefile Makefile.mingw NEWS README VERSION
 	@mkdir -p pidgin-conversation-locker
