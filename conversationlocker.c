@@ -61,8 +61,11 @@
 
 #include "gtkconv.h"
 #include "gtkplugin.h"
+#include "gtkprefs.h"
 #include "gtkrequest.h"
+#include "gtkutils.h"
 #include "pidgin.h"
+#include "pluginpref.h"
 #include "version.h"
 
 #include "conversationlocker-icons.h"
@@ -71,6 +74,10 @@
 #define PLUGIN_WEBSITE "http://pidgin-conversation-locker.googlecode.com"
 #define PLUGIN_ID "gtk-enli-conversation-locker"
 #define PLUGIN_VERSION "1.0"
+
+#define	PREFS_PREFIX		"/plugins/gtk/" PLUGIN_ID
+#define	PREFS_TEXT			PREFS_PREFIX "/text"
+#define	PREFS_ICON			PREFS_PREFIX "/icon"
 
 static PurplePlugin *plugin_handle = NULL;
 
@@ -532,6 +539,50 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;	/* tell plugin system that we are stable as rock */
 }
 
+static void
+disconnect_prefs_cb(GtkObject *object, gpointer data)
+{
+
+   	PurplePlugin *plugin = (PurplePlugin *)data;
+   	purple_prefs_disconnect_by_handle(plugin);
+
+    if(purple_prefs_get_bool(PREFS_TEXT))
+        purple_notify_info(plugin_handle, "Test Notification", "Test Notification",
+                           "TRUE");
+    else
+        purple_notify_info(plugin_handle, "Test Notification", "Test Notification",
+                         "FALSE");
+
+}
+
+static GtkWidget *
+get_config_frame(PurplePlugin *plugin)
+{
+	GtkWidget *ret;
+	GtkWidget *frame;
+
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
+
+	g_signal_connect(GTK_OBJECT(ret), "destroy", G_CALLBACK(disconnect_prefs_cb), plugin);
+
+	frame = pidgin_make_frame(ret, _("General"));
+	pidgin_prefs_checkbox(_("Show text"), PREFS_TEXT, frame);
+
+	gtk_widget_show_all(ret);
+	return ret;
+}
+
+static PidginPluginUiInfo ui_info =
+{
+	get_config_frame,
+	0,
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
 
 /* Plugin Stuff */
 static PurplePluginInfo info =
@@ -545,22 +596,22 @@ static PurplePluginInfo info =
 	NULL,                                           /* dependencies */
 	PURPLE_PRIORITY_DEFAULT,                        /* priority */
 
-	PLUGIN_ID,							   /* id */
+	PLUGIN_ID,							            /* id */
 	N_("Conversation Locker"),                      /* name */
-	PLUGIN_VERSION,                                /* version */
+	PLUGIN_VERSION,                                 /* version */
 	N_("Restricts closing of important conversations"
 	   "by locking(preventing from closing) them."),/* summary */
-	N_("Shows lock/unlock button on each
+	N_("Shows lock/unlock button on each "
 	"conversation window/tab with which important "
 	"conversations can be locked(prevented from closing). "
 	"Also shows warning if user tries to close window "
-	"containing locked conversations."),		   /* description */
-	PLUGIN_AUTHOR,							   /* author */
+	"containing locked conversations."),		    /* description */
+	PLUGIN_AUTHOR,						    	    /* author */
 	PLUGIN_WEBSITE,                                 /* homepage */
 	plugin_load,                                    /* load */
 	plugin_unload,                                  /* unload */
 	NULL,                                           /* destroy */
-	NULL,                                           /* ui_info */
+	&ui_info,                                       /* ui_info */
 	NULL,                                           /* extra_info */
 	NULL,                                           /* prefs_info */
 	plugin_actions,                                 /* actions */
@@ -576,6 +627,10 @@ static PurplePluginInfo info =
 static void
 init_plugin(PurplePlugin *plugin)
 {
+	purple_prefs_add_none(PREFS_PREFIX);
+
+	purple_prefs_add_bool(PREFS_TEXT, TRUE);
+	purple_prefs_add_bool(PREFS_ICON, TRUE);
 }
 
 PURPLE_INIT_PLUGIN(conversation-locker, init_plugin, info)
