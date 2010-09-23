@@ -87,6 +87,8 @@ static gboolean stop_window_closing_cb(GtkWidget *, GdkEventAny *, PidginWindow 
 
 static gulong get_handler_id(gchar *, gpointer);
 
+static void toggle_widget_text(PidginConversation *);
+
 
 /* block pidgins default signal handler and connect plugin`s */
 static void
@@ -277,7 +279,7 @@ lock_button_cb (GtkButton *button, PidginConversation *gtkconv)
 
 		toggle_conversation_lock(gtkconv, visibility);
 
-		gtk_label_set_markup(GTK_LABEL(label), "<span color=\"#047B00\"> Chat Locked </span>");
+		gtk_label_set_markup(GTK_LABEL(label), "<span color=\"#047B00\"> Chat locked </span>");
 		pixbuf = gdk_pixbuf_new_from_inline (-1, locked, FALSE, NULL);
 		gtk_image_set_from_pixbuf(GTK_IMAGE(icon), pixbuf);
 
@@ -289,7 +291,7 @@ lock_button_cb (GtkButton *button, PidginConversation *gtkconv)
 
 		toggle_conversation_lock(gtkconv, visibility);
 
-		gtk_label_set_markup(GTK_LABEL(label), "<span color=\"#FF0000\"> Chat Unlocked </span>");
+		gtk_label_set_markup(GTK_LABEL(label), "<span color=\"#FF0000\"> Chat unlocked </span>");
 		pixbuf = gdk_pixbuf_new_from_inline (-1, unlocked, FALSE, NULL);
 		gtk_image_set_from_pixbuf(GTK_IMAGE(icon), pixbuf);
 	}
@@ -309,8 +311,10 @@ create_lock_button_pidgin(PidginConversation *gtkconv)
 
 	lock_button = g_object_get_data(G_OBJECT(gtkconv->toolbar),"conversation_locker_button");
 
-	if (lock_button != NULL)
+	if (lock_button != NULL) {
+        toggle_widget_text(gtkconv);
 		return;
+    }
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	hbox1 = gtk_hbox_new(FALSE, 0);
@@ -337,6 +341,8 @@ create_lock_button_pidgin(PidginConversation *gtkconv)
 	g_object_set_data(G_OBJECT(gtkconv->toolbar), "conversation_locker_button", lock_button);
 	g_object_set_data(G_OBJECT(gtkconv->toolbar), "conversation_locker_label", label);
 	g_object_set_data(G_OBJECT(gtkconv->toolbar), "conversation_locker_icon", icon);
+
+    toggle_widget_text(gtkconv);
 }
 
 
@@ -398,7 +404,6 @@ lock_all_conversations_action(PurplePluginAction *action)
 	}
 
 }
-
 
 static void
 unlock_all_conversations_action(PurplePluginAction *action)
@@ -540,19 +545,41 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static void
+toggle_widget_text(PidginConversation *gtkconv)
+{
+    GList *convs = purple_get_conversations();
+    GtkWidget *label;
+    gboolean visibility;
+
+    visibility = purple_prefs_get_bool(PREFS_TEXT) ? TRUE: FALSE;
+
+    if(gtkconv != NULL) {
+        label = g_object_get_data(G_OBJECT(gtkconv->toolbar), "conversation_locker_label");
+        gtk_widget_set_visible(label, visibility);
+        return;
+    }
+
+    while (convs) {
+        PurpleConversation *conv = (PurpleConversation *)convs->data;
+
+		    if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
+		        gtkconv = PIDGIN_CONVERSATION(conv);
+				label = g_object_get_data(G_OBJECT(gtkconv->toolbar), "conversation_locker_label");
+				gtk_widget_set_visible(label, visibility);
+		    }
+
+        convs = convs->next;
+    }
+}
+
+static void
 disconnect_prefs_cb(GtkObject *object, gpointer data)
 {
 
    	PurplePlugin *plugin = (PurplePlugin *)data;
    	purple_prefs_disconnect_by_handle(plugin);
 
-    if(purple_prefs_get_bool(PREFS_TEXT))
-        purple_notify_info(plugin_handle, "Test Notification", "Test Notification",
-                           "TRUE");
-    else
-        purple_notify_info(plugin_handle, "Test Notification", "Test Notification",
-                         "FALSE");
-
+    toggle_widget_text(NULL);
 }
 
 static GtkWidget *
@@ -567,7 +594,7 @@ get_config_frame(PurplePlugin *plugin)
 	g_signal_connect(GTK_OBJECT(ret), "destroy", G_CALLBACK(disconnect_prefs_cb), plugin);
 
 	frame = pidgin_make_frame(ret, _("General"));
-	pidgin_prefs_checkbox(_("Show text"), PREFS_TEXT, frame);
+	pidgin_prefs_checkbox(_("Show \"Chat locked/unlocked\" text."), PREFS_TEXT, frame);
 
 	gtk_widget_show_all(ret);
 	return ret;
