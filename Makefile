@@ -54,12 +54,12 @@ CONVLOCKER_SOURCES = 	conversationlocker.c \
 					conversationlocker-icons.h
 
 CONVLOCKER_MAIN = conversationlocker.c
-CONVLOCKER_VERSION = 1.0
+CONVLOCKER_VERSION = 1.1
 
 #Standard stuff here
 .PHONY:	all clean install installers sourcepackage
 
-all:	conversationlocker.so conversationlocker.dll conversationlocker.exe sourcepackage linux-bin
+all:	conversationlocker.so conversationlocker.dll conversationlocker.zip conversationlocker.exe sourcepackage linux-bin
 
 install:
 	cp conversationlocker.so /usr/lib/pidgin/
@@ -88,6 +88,9 @@ conversationlocker.dll:	$(CONVLOCKER_SOURCES)
 #-Wall -I. -g -O2 -pipe conversationlocker.c -o conversationlocker.dll -shared -mno-cygwin -DSKYPENET -Wl,--strip-all
 	upx conversationlocker.dll
 
+conversationlocker.zip : conversationlocker.dll
+	@zip conversationlocker_$(CONVLOCKER_VERSION).zip conversationlocker.dll > /dev/null
+
 conversationlocker.deb :	conversationlocker.so
 	@echo "\nDont forget to update version number"
 	@mkdir -p debdir/DEBIAN
@@ -95,7 +98,7 @@ conversationlocker.deb :	conversationlocker.so
 	@chmod -x conversationlocker.so
 	@cp conversationlocker.so debdir/usr/lib/pidgin/
 	@cp packaging/deb/DEBIAN/control debdir/DEBIAN/control
-	@dpkg-deb --build debdir pidgin-conversation-locker_$(CONVLOCKER_VERSION)_2_i386.deb
+	@dpkg-deb --build debdir pidgin-conversation-locker_$(CONVLOCKER_VERSION)_i386.deb
 	@rm -r debdir
 	@echo "\ndeb package generated."
 
