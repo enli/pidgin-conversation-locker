@@ -89,7 +89,7 @@ conversationlocker.dll:	$(CONVLOCKER_SOURCES)
 	upx conversationlocker.dll
 
 conversationlocker.zip : conversationlocker.dll
-	@zip conversationlocker_$(CONVLOCKER_VERSION).zip conversationlocker.dll > /dev/null
+	@zip conversationlocker_$(CONVLOCKER_VERSION)_portable.zip conversationlocker.dll > /dev/null
 
 conversationlocker.deb :	conversationlocker.so
 	@echo "\nDont forget to update version number"
