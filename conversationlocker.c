@@ -73,7 +73,7 @@
 #define PLUGIN_AUTHOR "Peeyoosh Sangolekar <piyush_sangolekar@hotmail.com>"
 #define PLUGIN_WEBSITE "http://pidgin-conversation-locker.googlecode.com"
 #define PLUGIN_ID "gtk-enli-conversation-locker"
-#define PLUGIN_VERSION "1.0"
+#define PLUGIN_VERSION "1.1"
 
 #define	PREFS_PREFIX		"/plugins/gtk/" PLUGIN_ID
 #define	PREFS_TEXT			PREFS_PREFIX "/text"
@@ -555,7 +555,11 @@ toggle_widget_text(PidginConversation *gtkconv)
 
     if(gtkconv != NULL) {
         label = g_object_get_data(G_OBJECT(gtkconv->toolbar), "conversation_locker_label");
-        gtk_widget_set_visible(label, visibility);
+        if (visibility)
+            gtk_widget_show(label);
+        else
+            gtk_widget_hide(label);
+
         return;
     }
 
@@ -565,7 +569,10 @@ toggle_widget_text(PidginConversation *gtkconv)
 		    if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
 		        gtkconv = PIDGIN_CONVERSATION(conv);
 				label = g_object_get_data(G_OBJECT(gtkconv->toolbar), "conversation_locker_label");
-				gtk_widget_set_visible(label, visibility);
+                if (visibility)
+                    gtk_widget_show(label);
+                else
+                    gtk_widget_hide(label);
 		    }
 
         convs = convs->next;
