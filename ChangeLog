@@ -1,5 +1,10 @@
 Conversation Locker plugin for Pidgin : Prevent accidental closing of important conversations
 
+
+Version 1.1 (09/30/10) :
+	* Added preference to hide/show "Chat locked/unlocked" text on the button.
+	  (Especially useful for users those like minimalistic UI.)
+
 Version 1.0 (10/02/09) :
 	* Initial release.
 

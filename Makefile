@@ -15,8 +15,8 @@ PIDGIN_CFLAGS = -I/usr/include/pidgin -I/usr/local/include/pidgin
 LIBPURPLE_CFLAGS = -I/usr/include/libpurple -I/usr/local/include/libpurple -DPURPLE_PLUGINS -DENABLE_NLS -DHAVE_ZLIB
 GTK_CFLAGS = -D_REENTRANT -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pango-1.0 -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/directfb -I/usr/include/libpng12 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
 
-WIN32_DEV_DIR = /home/enli/development/pidgin/win32/win32-dev
-WIN32_PIDGIN_DIR = /home/enli/development/pidgin/win32/pidgin-2.6.2
+WIN32_DEV_DIR = /home/enli/development/sources/pidgin/win32/win32-dev
+WIN32_PIDGIN_DIR = /home/enli/development/sources/pidgin/pidgin-2.6.2
 WIN32_INCLUDE_PATHS = 	-I/usr/i586-mingw32msvc/include -I$(WIN32_DEV_DIR)/gtk_2_0/include \
 					-I$(WIN32_DEV_DIR)/gtk_2_0/include/gtk-2.0 \
 					-I$(WIN32_DEV_DIR)/gtk_2_0/include/glib-2.0 \
