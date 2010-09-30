@@ -16,7 +16,7 @@ LIBPURPLE_CFLAGS = -I/usr/include/libpurple -I/usr/local/include/libpurple -DPUR
 GTK_CFLAGS = -D_REENTRANT -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pango-1.0 -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/directfb -I/usr/include/libpng12 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
 
 WIN32_DEV_DIR = /home/enli/development/sources/pidgin/win32/win32-dev
-WIN32_PIDGIN_DIR = /home/enli/development/sources/pidgin/pidgin-2.6.2
+WIN32_PIDGIN_DIR = /home/enli/development/sources/pidgin/win32/pidgin-2.6.6
 WIN32_INCLUDE_PATHS = 	-I/usr/i586-mingw32msvc/include -I$(WIN32_DEV_DIR)/gtk_2_0/include \
 					-I$(WIN32_DEV_DIR)/gtk_2_0/include/gtk-2.0 \
 					-I$(WIN32_DEV_DIR)/gtk_2_0/include/glib-2.0 \
@@ -77,7 +77,7 @@ clean:
 	@rm -f pidgin-conversation-locker-$(CONVLOCKER_VERSION)-src.tar.bz2
 	@rm -f pidgin-conversation-locker-$(CONVLOCKER_VERSION)-linux-i386.tar.bz2
 	@rm -f *.deb
-	@echo -e "Cleanup performed!"
+	@echo "Cleanup performed!"
 
 conversationlocker.so:		$(CONVLOCKER_SOURCES)
 	$(LINUX32_COMPILER) $(CFLAGS) $(LIBPURPLE_CFLAGS) $(PIDGIN_CFLAGS) $(GTK_CFLAGS) -Wall -pthread $(GLIB_CFLAGS) -I. -pipe conversationlocker.c -o conversationlocker.so -shared -fPIC -DPIC
@@ -97,21 +97,21 @@ conversationlocker.deb :	conversationlocker.so
 	@cp packaging/deb/DEBIAN/control debdir/DEBIAN/control
 	@dpkg-deb --build debdir pidgin-conversation-locker_$(CONVLOCKER_VERSION)_2_i386.deb
 	@rm -r debdir
-	@echo -e "\ndeb package generated."
+	@echo "\ndeb package generated."
 
 conversationlocker.exe:	conversationlocker.dll
 	@cp packaging/windows/conversationlocker.nsi .
 	@makensis conversationlocker.nsi > /dev/null
 	@rm conversationlocker.nsi
-	@echo -e "\n Did you update the version?\n"
-	@echo -e "\n.exe installer generated."
+	@echo "\n >>> Did you update the version? <<<"
+	@echo "\n.exe installer generated."
 
 sourcepackage :	$(CONVLOCKER_SOURCES) img-src packaging AUTHORS ChangeLog COPYING Makefile Makefile.mingw NEWS README VERSION
 	@mkdir -p pidgin-conversation-locker
 	@cp -r $^ pidgin-conversation-locker
 	@tar --bzip2 -cf pidgin-conversation-locker-$(CONVLOCKER_VERSION)-src.tar.bz2 pidgin-conversation-locker
 	@rm -rf pidgin-conversation-locker
-	@echo -e "\nSource package generated."
+	@echo "\nSource package generated."
 
 linux-bin :	packaging/linux/install.sh conversationlocker.so
 	@echo "Don't forget to update version number in /packaging/linux/README"
@@ -119,5 +119,5 @@ linux-bin :	packaging/linux/install.sh conversationlocker.so
 	@cp packaging/linux/install.sh packaging/linux/README conversationlocker.so pidgin-conversation-locker-$(CONVLOCKER_VERSION)
 	@tar --bzip2 -cf pidgin-conversation-locker-$(CONVLOCKER_VERSION)-linux-i386.tar.bz2 pidgin-conversation-locker-$(CONVLOCKER_VERSION)
 	@rm -r pidgin-conversation-locker-$(CONVLOCKER_VERSION)
-	@echo -e "\nLinux binary installer generated."
+	@echo "\nLinux binary installer generated."
 
