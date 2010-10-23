@@ -145,17 +145,19 @@ get_locked_conversations(PidginWindow *win)
 
 /* user chose to close window */
 static void
-option_yes_cb(PidginWindow *win, gboolean emit)
+option_yes_cb(PidginWindow *win, gboolean no_emit)
 {
 	gulong default_handler_id = (gulong)g_hash_table_lookup(hash_table, win->window);
 
 	unblock_pidgin_handler(default_handler_id, win);
 
-	/* when emit is declared and not initialized it is TRUE
-	 * used as emit=FALSE for unlock_all_action, as we don't want window to close on us
+	/* when no_emit is declared but not defined it is always FALSE
+	 * used as no_emit=TRUE for unlock_all_action(), as we don't want window to close on us
 	 */
-	if (emit)
+	if (!no_emit) {
+		purple_debug_info(PLUGIN_ID, "Emiting delete_event");
 		g_signal_emit_by_name(G_OBJECT(win->window), "delete_event", win, NULL);
+	}
 }
 
 
@@ -177,7 +179,7 @@ stop_window_closing_cb(GtkWidget *w, GdkEventAny *e, PidginWindow* win)
 						 " By choosing to close window, those locked conversations will be lost." \
 						 "\n\nDo you wish to close all conversations including locked conversations?",
 	                       	 1, NULL, NULL, NULL, win, 2,
-	                       	 _("_Yes"), (option_yes_cb), _("_No"), NULL);
+	                       	_("_Yes"), (option_yes_cb), _("_No"), NULL);
 	//} else
 		/* It would have been efficient just to call  option_yes_cb(win),
 		 * but that crashes pidgin mysteriously. The problem is with g_signal_emit()
@@ -437,7 +439,7 @@ unlock_all_conversations_action(PurplePluginAction *action)
 
 		if (handler_found != 0)
 		/* restore pidgins default "delete_signal" handler and dont emit signal*/
-			option_yes_cb(gtkwin, FALSE);
+			option_yes_cb(gtkwin, TRUE);
 	}
 
 /* glib - since 2.12, might not compile on windows / with migw32 cross compilation
