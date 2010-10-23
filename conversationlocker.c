@@ -78,6 +78,7 @@
 #define	PREFS_PREFIX		"/plugins/gtk/" PLUGIN_ID
 #define	PREFS_TEXT			PREFS_PREFIX "/text"
 #define	PREFS_ICON			PREFS_PREFIX "/icon"
+#define PREFS_BUTTON_ORDER	PREFS_PREFIX "/button_order"
 
 static PurplePlugin *plugin_handle = NULL;
 
@@ -142,22 +143,25 @@ get_locked_conversations(PidginWindow *win)
 	return locked_conversations;
 }
 
-
-/* user chose to close window */
 static void
-option_yes_cb(PidginWindow *win, gboolean no_emit)
+close_window(PidginWindow *win, gboolean emit)
 {
 	gulong default_handler_id = (gulong)g_hash_table_lookup(hash_table, win->window);
 
 	unblock_pidgin_handler(default_handler_id, win);
 
-	/* when no_emit is declared but not defined it is always FALSE
-	 * used as no_emit=TRUE for unlock_all_action(), as we don't want window to close on us
-	 */
-	if (!no_emit) {
-		purple_debug_info(PLUGIN_ID, "Emiting delete_event");
+	/* used as emit=FALSE for unlock_all_conversations_action(), as we don't want window to close on us */
+	if (emit) {
+		purple_debug_info(PLUGIN_ID, "Emiting delete_event on window.");
 		g_signal_emit_by_name(G_OBJECT(win->window), "delete_event", win, NULL);
 	}
+}
+
+/* user chose to close window */
+static void
+option_yes_cb(PidginWindow *win)
+{
+	close_window(win, TRUE);
 }
 
 
@@ -173,13 +177,26 @@ stop_window_closing_cb(GtkWidget *w, GdkEventAny *e, PidginWindow* win)
 	if((locked_conversations = get_locked_conversations(win)) != 0){
 	*/
 
+    gboolean windows_style_button_order = purple_prefs_get_bool(PREFS_BUTTON_ORDER) ? TRUE: FALSE;
+
+	if(windows_style_button_order) {
 		purple_request_action(plugin_handle, "Conversation Locker",
 					 	 "Close locked conversations?",
 						 "There are few conversations which are still locked." \
 						 " By choosing to close window, those locked conversations will be lost." \
 						 "\n\nDo you wish to close all conversations including locked conversations?",
-	                       	 1, NULL, NULL, NULL, win, 2,
-	                       	_("_Yes"), (option_yes_cb), _("_No"), NULL);
+						 1, NULL, NULL, NULL, win, 3,
+						 _("_Cancel"), NULL, _("_No"), NULL, _("_Yes"), (option_yes_cb));
+
+	} else {
+		purple_request_action(plugin_handle, "Conversation Locker",
+					 	 "Close locked conversations?",
+						 "There are few conversations which are still locked." \
+						 " By choosing to close window, those locked conversations will be lost." \
+						 "\n\nDo you wish to close all conversations including locked conversations?",
+						 2, NULL, NULL, NULL, win, 3,
+						 _("_Yes"), (option_yes_cb), _("_Cancel"), NULL, _("_No"), NULL);
+	}
 	//} else
 		/* It would have been efficient just to call  option_yes_cb(win),
 		 * but that crashes pidgin mysteriously. The problem is with g_signal_emit()
@@ -439,7 +456,7 @@ unlock_all_conversations_action(PurplePluginAction *action)
 
 		if (handler_found != 0)
 		/* restore pidgins default "delete_signal" handler and dont emit signal*/
-			option_yes_cb(gtkwin, TRUE);
+			close_window(gtkwin, FALSE);
 	}
 
 /* glib - since 2.12, might not compile on windows / with migw32 cross compilation
@@ -605,6 +622,9 @@ get_config_frame(PurplePlugin *plugin)
 	frame = pidgin_make_frame(ret, _("General"));
 	pidgin_prefs_checkbox(_("Show \"Chat locked/unlocked\" text."), PREFS_TEXT, frame);
 
+	pidgin_prefs_checkbox(_("Use Windows styled(Yes/No/Cancel) button order for \"Close locked conversations?\"prompt\n"
+							"Non-windows style - No/Cancel/Yes)"), PREFS_BUTTON_ORDER, frame);
+
 	gtk_widget_show_all(ret);
 	return ret;
 }
@@ -667,6 +687,7 @@ init_plugin(PurplePlugin *plugin)
 
 	purple_prefs_add_bool(PREFS_TEXT, TRUE);
 	purple_prefs_add_bool(PREFS_ICON, TRUE);
+	purple_prefs_add_bool(PREFS_BUTTON_ORDER, FALSE);
 }
 
 PURPLE_INIT_PLUGIN(conversation-locker, init_plugin, info)
