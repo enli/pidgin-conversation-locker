@@ -8,8 +8,10 @@
 
 #Customizable Stuff here
 LINUX32_COMPILER = gcc
+LINUX64_COMPILER = gcc
 WIN32_COMPILER = /usr/bin/i586-mingw32msvc-gcc
 CFLAGS = -g -g -O2
+CFLAGS64 = -g -g -O2 -m64
 
 PIDGIN_CFLAGS = -I/usr/include/pidgin -I/usr/local/include/pidgin
 LIBPURPLE_CFLAGS = -I/usr/include/libpurple -I/usr/local/include/libpurple -DPURPLE_PLUGINS -DENABLE_NLS -DHAVE_ZLIB
@@ -59,7 +61,8 @@ CONVLOCKER_VERSION = 1.1
 #Standard stuff here
 .PHONY:	all clean install installers sourcepackage
 
-all:	conversationlocker.so conversationlocker.dll conversationlocker.zip conversationlocker.exe sourcepackage linux-bin
+all:	conversationlocker.so conversationlocker64.so conversationlocker.dll conversationlocker.zip conversationlocker.exe sourcepackage linux-bin \
+		conversationlocker.deb conversationlocker64.deb
 
 install:
 	cp conversationlocker.so /usr/lib/pidgin/
@@ -71,20 +74,25 @@ uninstall:
 
 clean:
 	@rm -f conversationlocker.so
+	@rm -f conversationlocker64.so
 	@rm -f conversationlocker.dll
 	@rm -f conversationlocker.o
 	@rm -f *.exe
+	@rm -f *.zip
 	@rm -f pidgin-conversation-locker-$(CONVLOCKER_VERSION)-src.tar.bz2
 	@rm -f pidgin-conversation-locker-$(CONVLOCKER_VERSION)-linux-i386.tar.bz2
 	@rm -f *.deb
 	@echo "Cleanup performed!"
 
 conversationlocker.so:		$(CONVLOCKER_SOURCES)
-	$(LINUX32_COMPILER) $(CFLAGS) $(LIBPURPLE_CFLAGS) $(PIDGIN_CFLAGS) $(GTK_CFLAGS) -Wall -pthread $(GLIB_CFLAGS) -I. -pipe conversationlocker.c -o conversationlocker.so -shared -fPIC -DPIC
+	$(LINUX32_COMPILER) $(CFLAGS) $(LIBPURPLE_CFLAGS) $(PIDGIN_CFLAGS) $(GTK_CFLAGS) -Wall -pthread $(GLIB_CFLAGS) -I. -pipe conversationlocker.c -o $@ -shared -fPIC -DPIC
+
+conversationlocker64.so:		$(CONVLOCKER_SOURCES)
+	$(LINUX64_COMPILER) $(CFLAGS64) $(LIBPURPLE_CFLAGS) $(PIDGIN_CFLAGS) $(GTK_CFLAGS) -Wall -pthread $(GLIB_CFLAGS) -I. -pipe conversationlocker.c -o $@ -shared -fPIC -DPIC
 
 conversationlocker.dll:	$(CONVLOCKER_SOURCES)
 	${WIN32_COMPILER} $(WIN32_ARGS) ${WIN32_INCLUDE_PATHS} -o conversationlocker.o -c conversationlocker.c
-	${WIN32_COMPILER} -shared conversationlocker.o ${WIN32_LIB_PATHS} $(WIN32_LIBS) -Wl,--enable-auto-image-base -o conversationlocker.dll
+	${WIN32_COMPILER} -shared conversationlocker.o ${WIN32_LIB_PATHS} $(WIN32_LIBS) -Wl,--enable-auto-image-base -o $@
 #-Wall -I. -g -O2 -pipe conversationlocker.c -o conversationlocker.dll -shared -mno-cygwin -DSKYPENET -Wl,--strip-all
 	upx conversationlocker.dll
 
@@ -100,7 +108,18 @@ conversationlocker.deb :	conversationlocker.so
 	@cp packaging/deb/DEBIAN/control debdir/DEBIAN/control
 	@dpkg-deb --build debdir pidgin-conversation-locker_$(CONVLOCKER_VERSION)_i386.deb
 	@rm -r debdir
-	@echo "\ndeb package generated."
+	@echo "\ndebi386 package created."
+
+conversationlocker64.deb :	conversationlocker64.so
+	@echo "\nDont forget to update version number"
+	@mkdir -p debdir/DEBIAN
+	@mkdir -p debdir/usr/lib/pidgin/
+	@chmod -x conversationlocker64.so
+	@cp conversationlocker64.so debdir/usr/lib/pidgin/
+	@cp packaging/deb/DEBIAN/control64 debdir/DEBIAN/control
+	@dpkg-deb --build debdir pidgin-conversation-locker_$(CONVLOCKER_VERSION)_amd64.deb
+	@rm -r debdir
+	@echo "\ndeb64 package created."
 
 conversationlocker.exe:	conversationlocker.dll
 	@cp packaging/windows/conversationlocker.nsi .

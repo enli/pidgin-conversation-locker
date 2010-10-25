@@ -1,0 +1,16 @@
+Package: pidgin-conversation-locker
+Version: 1.1-0
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: pidgin (>= 1.2.5.0)
+Maintainer: Peeyoosh Sangolekar <peeyoosh.sangolekar@gmail.com>
+Homepage: http://pidgin-conversation-locker.googlecode.com
+Description: A pidgin plugin that prevents closing of important conversations
+ Prevents closing of important conversations by locking(restricting close) them.
+ Lock/unlock button is added on each conversation with which conversation can be
+ locked/unlocked.
+ .
+ Also prompts user if he tries to close window containing locked conversations
+ if any.
+
