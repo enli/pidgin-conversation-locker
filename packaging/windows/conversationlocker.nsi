@@ -7,7 +7,7 @@ SetCompress off
 ; todo: SetBrandingImage
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "pidgin-conversation-locker"
-!define PRODUCT_VERSION "1.1"
+!define PRODUCT_VERSION "1.2"
 !define PRODUCT_PUBLISHER "Peeyoosh Sangolekar"
 !define PRODUCT_WEB_SITE "http://pidgin-facebookchat.googlecode.com/"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"

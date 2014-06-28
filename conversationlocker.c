@@ -73,7 +73,7 @@
 #define PLUGIN_AUTHOR "Peeyoosh Sangolekar <piyush_sangolekar@hotmail.com>"
 #define PLUGIN_WEBSITE "http://pidgin-conversation-locker.googlecode.com"
 #define PLUGIN_ID "gtk-enli-conversation-locker"
-#define PLUGIN_VERSION "1.1"
+#define PLUGIN_VERSION "1.2"
 
 #define	PREFS_PREFIX		"/plugins/gtk/" PLUGIN_ID
 #define	PREFS_TEXT			PREFS_PREFIX "/text"

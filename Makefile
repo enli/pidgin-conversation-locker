@@ -6,7 +6,12 @@
 # and came up with this working Makefile (+referred to other plugin makefiles).
 # I am going to keep all that stuff, in the hope that some other fellow programmer might find this makefile template useful for pidgin plugin development.
 
+CONVLOCKER_VERSION = 1.2
+
 #Customizable Stuff here
+WIN32_DEV_DIR = /home/enli/development/sources/pidgin/win32/win32-dev
+WIN32_PIDGIN_DIR = /home/enli/development/sources/pidgin/win32/pidgin-2.10.9-win32
+WIN32_GTK_VERSION= gtk_2_0-2.14
 LINUX32_COMPILER = gcc
 LINUX64_COMPILER = gcc
 WIN32_COMPILER = /usr/bin/i586-mingw32msvc-gcc
@@ -17,23 +22,21 @@ PIDGIN_CFLAGS = -I/usr/include/pidgin -I/usr/local/include/pidgin
 LIBPURPLE_CFLAGS = -I/usr/include/libpurple -I/usr/local/include/libpurple -DPURPLE_PLUGINS -DENABLE_NLS -DHAVE_ZLIB
 GTK_CFLAGS = `pkg-config --cflags --libs gtk+-2.0`
 
-WIN32_DEV_DIR = /home/enli/development/sources/pidgin/win32/win32-dev
-WIN32_PIDGIN_DIR = /home/enli/development/sources/pidgin/win32/pidgin-2.6.6
-WIN32_INCLUDE_PATHS = 	-I/usr/i586-mingw32msvc/include -I$(WIN32_DEV_DIR)/gtk_2_0/include \
-					-I$(WIN32_DEV_DIR)/gtk_2_0/include/gtk-2.0 \
-					-I$(WIN32_DEV_DIR)/gtk_2_0/include/glib-2.0 \
-					-I$(WIN32_DEV_DIR)/gtk_2_0/include/pango-1.0 \
-					-I$(WIN32_DEV_DIR)/gtk_2_0/include/atk-1.0 \
-					-I$(WIN32_DEV_DIR)/gtk_2_0/include/cairo \
-					-I$(WIN32_DEV_DIR)/gtk_2_0/lib/glib-2.0/include \
-					-I$(WIN32_DEV_DIR)/gtk_2_0/lib/gtk-2.0/include \
+WIN32_INCLUDE_PATHS = 	-I/usr/i586-mingw32msvc/include -I$(WIN32_DEV_DIR)/$(WIN32_GTK_VERSION)/include \
+					-I$(WIN32_DEV_DIR)/$(WIN32_GTK_VERSION)/include/gtk-2.0 \
+					-I$(WIN32_DEV_DIR)/$(WIN32_GTK_VERSION)/include/glib-2.0 \
+					-I$(WIN32_DEV_DIR)/$(WIN32_GTK_VERSION)/include/pango-1.0 \
+					-I$(WIN32_DEV_DIR)/$(WIN32_GTK_VERSION)/include/atk-1.0 \
+					-I$(WIN32_DEV_DIR)/$(WIN32_GTK_VERSION)/include/cairo \
+					-I$(WIN32_DEV_DIR)/$(WIN32_GTK_VERSION)/lib/glib-2.0/include \
+					-I$(WIN32_DEV_DIR)/$(WIN32_GTK_VERSION)/lib/gtk-2.0/include \
 					-I$(WIN32_PIDGIN_DIR)/libpurple \
 					-I$(WIN32_PIDGIN_DIR)/libpurple/win32 \
 					-I$(WIN32_PIDGIN_DIR)/pidgin \
 					-I$(WIN32_PIDGIN_DIR)/pidgin/win32 \
 					-I$(WIN32_PIDGIN_DIR)
 
-WIN32_LIB_PATHS = 	-L$(WIN32_DEV_DIR)/gtk_2_0/lib \
+WIN32_LIB_PATHS = 	-L$(WIN32_DEV_DIR)/$(WIN32_GTK_VERSION)/lib \
 				-L$(WIN32_PIDGIN_DIR)/libpurple \
 				-L$(WIN32_PIDGIN_DIR)/pidgin
 
@@ -56,7 +59,6 @@ CONVLOCKER_SOURCES = 	conversationlocker.c \
 					conversationlocker-icons.h
 
 CONVLOCKER_MAIN = conversationlocker.c
-CONVLOCKER_VERSION = 1.1
 
 #Standard stuff here
 .PHONY:	all clean install installers sourcepackage

@@ -6,7 +6,7 @@
 #
 
 # point this to your Pidgin source
-PIDGIN_TREE_TOP := /home/enli/development/sources/pidgin/win32/pidgin-2.6.6
+PIDGIN_TREE_TOP := /home/enli/development/sources/pidgin/win32/pidgin-2.10.9-win32
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = conversationlocker
