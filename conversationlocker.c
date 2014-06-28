@@ -525,8 +525,6 @@ plugin_unload(PurplePlugin *plugin)
 	purple_signal_disconnect(gtk_conv_handle, "conversation-switched", plugin_handle,
 					  PURPLE_CALLBACK(conversation_switched_cb));
 
-	g_hash_table_destroy(hash_table);
-
 	/* it is shame that user unloaded plugin, but let plugin system know that we are just fine */
 	return TRUE;
 }
