@@ -15,7 +15,7 @@ CFLAGS64 = -g -g -O2 -m64
 
 PIDGIN_CFLAGS = -I/usr/include/pidgin -I/usr/local/include/pidgin
 LIBPURPLE_CFLAGS = -I/usr/include/libpurple -I/usr/local/include/libpurple -DPURPLE_PLUGINS -DENABLE_NLS -DHAVE_ZLIB
-GTK_CFLAGS = -D_REENTRANT -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pango-1.0 -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/directfb -I/usr/include/libpng12 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
+GTK_CFLAGS = `pkg-config --cflags --libs gtk+-2.0`
 
 WIN32_DEV_DIR = /home/enli/development/sources/pidgin/win32/win32-dev
 WIN32_PIDGIN_DIR = /home/enli/development/sources/pidgin/win32/pidgin-2.6.6
