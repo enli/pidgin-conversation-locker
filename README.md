@@ -8,7 +8,7 @@ Instead of switching to tab, you may mistakenly close some other important tab. 
 - Unlock previously locked conversation
 - Prompts user if he chooses to close window containing locked conversations
 - Quickly lock/unlock conversations from system tray menu
-- 
+
 ## Screenshots :
 
 - Lock/unlock button for each conversation (left)
